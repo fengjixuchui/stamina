@@ -6,13 +6,7 @@
 #include <linux/mm.h>
 #include <linux/slab.h>
 
-#include "udis86.h"
-
-#define debug(fmt...)				\
-	pr_info("[" KBUILD_MODNAME "] " fmt)
-
-#define to_ptr(x)				\
-	(void *)((unsigned long)(x))
+#include "stamina.h"
 
 typedef typeof(module_alloc) modalloc_t;
 modalloc_t *modalloc = NULL;

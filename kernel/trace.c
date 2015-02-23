@@ -9,26 +9,33 @@ void ServiceTraceEnter(struct pt_regs *regs)
 {
 	unsigned long *s;
 	unsigned long *n;
+	stamina_t *stamp = (stamina_t *)(end_of_stack(current));
+	unsigned long flags;
 
 	get_bp(s);
 
-	for (n = end_of_stack(current); n != s; n++) {
+	local_irq_save(flags);
+	for (n = stamp->stack; n != s; n++) {
 		*n = STACK_END_MAGIC;
 	}
+	local_irq_restore(flags);
+
+	stamp->nr_syscall = regs->ax;
 }
 
 void ServiceTraceLeave(struct pt_regs *regs)
 {
 	unsigned long *s;
 	unsigned long *n;
+	stamina_t *stamp = (stamina_t *)(end_of_stack(current));
 
 	get_bp(s);
 
-	for (n = end_of_stack(current); n != s; n++) {
+	for (n = stamp->stack; n != s; n++) {
 		if (*n != STACK_END_MAGIC)
 			break;
 	}
 
-	debug("Task \"%s\" stack usage %lu / %lu\n", current->comm, \
-	      (THREAD_SIZE / sizeof(unsigned long)) - (n - end_of_stack(current)), (THREAD_SIZE / sizeof(unsigned long)));
+	debug("nr_syscall:%04lx used %04lu / %04lu (%s)\n", stamp->nr_syscall, \
+		(THREAD_SIZE / sizeof(unsigned long)) - (n - end_of_stack(current)), (THREAD_SIZE / sizeof(unsigned long)), current->comm);
 }

@@ -15,4 +15,15 @@ typedef struct {
 	unsigned long stack[0];
 } stamina_t;
 
+typedef struct {
+
+	unsigned long usage;
+	unsigned long stack_min;
+	unsigned long stack_max;
+
+} scusage_t;
+
+int stamina_init(void);
+void stamina_cleanup(void);
+
 #endif /* __STAMINA_H__ */

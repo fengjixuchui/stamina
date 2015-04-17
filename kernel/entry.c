@@ -528,6 +528,9 @@ int init_module(void)
 {
 	debug("# SYSCALL hooking module\n");
 
+	if (stamina_init())
+		return -ENOMEM;
+
 	modalloc = (modalloc_t *)get_symbol_address("module_alloc");
 	if (!modalloc)
 		return -EINVAL;
@@ -543,6 +546,8 @@ void cleanup_module(void)
 {
 	restore();
 	cleanup();
+
+	stamina_cleanup();
 
 	debug("# DONE\n");
 }

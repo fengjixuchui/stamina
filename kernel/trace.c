@@ -76,12 +76,12 @@ static int stamdev_open(struct inode *inode, struct file *file)
 
 static ssize_t stamdev_read(struct file *file, char __user *ptr, size_t len, loff_t *ppos)
 {
-	size_t nbytes;
+	ssize_t nbytes;
 
-	if (*ppos > TABLE_SIZE)
+	if ((*ppos + len) > TABLE_SIZE)
 		return -EINVAL;
 
-	nbytes = min_t(size_t, TABLE_SIZE, TABLE_SIZE - *ppos);
+	nbytes = min_t(size_t, len, TABLE_SIZE - *ppos);
 	copy_to_user(ptr, table + *ppos, nbytes);
 
 	*ppos += nbytes;

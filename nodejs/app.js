@@ -4,7 +4,10 @@ var binary = require('binary');
 var express = require('express');
 
 var app = express();
-  
+
+app.set('views', './views')
+app.set('view engine', 'jade');
+
 app.get('/stamina', function (req, res) {
 
 	res.writeHead(200, { 'Content-Type' : 'text/html' });
@@ -27,6 +30,10 @@ app.get('/stamina', function (req, res) {
 		res.end();
 	})
 })
+
+app.get('/', function(req, res){
+	res.render('index.jade');
+});
 
 var server = app.listen(3000, function () {
 });

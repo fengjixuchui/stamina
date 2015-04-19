@@ -1,13 +1,19 @@
 #include <linux/fs.h>
 #include <linux/slab.h>
-#include <linux/sched.h>
 #include <linux/magic.h>
-#include <linux/unistd.h>
+#include <linux/compat.h>
 #include <linux/miscdevice.h>
 
-#define __NR_syscall_max		1024
-
 #include <asm/stacktrace.h>
+#include <asm/asm-offsets.h>
+
+#ifdef CONFIG_X86_32
+# define IS_IA32		1
+#elif defined(CONFIG_IA32_EMULATION)
+# define IS_IA32		is_compat_task()
+#else
+# define IS_IA32		0
+#endif
 
 #include "stamina.h"
 
@@ -19,6 +25,8 @@ void ServiceTraceEnter(struct pt_regs *regs)
 	unsigned long *n;
 	stamina_t *stamp = (stamina_t *)(end_of_stack(current));
 	unsigned long flags;
+
+	if (IS_IA32) return;
 
 	get_bp(s);
 
@@ -38,6 +46,8 @@ void ServiceTraceLeave(struct pt_regs *regs)
 	unsigned long *n;
 	stamina_t *stamp = (stamina_t *)(end_of_stack(current));
 	unsigned long flags;
+
+	if (IS_IA32) return;
 
 	get_bp(s);
 

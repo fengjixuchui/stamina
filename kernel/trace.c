@@ -76,9 +76,9 @@ static int stamdev_open(struct inode *inode, struct file *file)
 
 static ssize_t stamdev_read(struct file *file, char __user *ptr, size_t len, loff_t *ppos)
 {
-	ssize_t nbytes;
+	size_t nbytes;
 
-	if ((*ppos + len) > TABLE_SIZE)
+	if (*ppos > TABLE_SIZE)
 		return -EINVAL;
 
 	nbytes = min_t(size_t, len, TABLE_SIZE - *ppos);
